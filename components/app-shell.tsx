@@ -1,0 +1,135 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { useAuth } from "./auth-provider";
+import { Icon } from "./icons";
+
+const navigation = [
+  { href: "/", label: "Live tickets", icon: "tickets" as const },
+  { href: "/games", label: "My games", icon: "game" as const },
+  { href: "/account", label: "Account", icon: "user" as const },
+];
+
+export function AppShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const { user, loading } = useAuth();
+  const [open, setOpen] = useState(false);
+  const name =
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    user?.email?.split("@")[0] ||
+    "Player";
+
+  return (
+    <div className="app-shell">
+      <a className="skip-link" href="#main-content">
+        Skip to content
+      </a>
+      <header className="mobile-header">
+        <Link href="/" className="brand">
+          <span className="brand-symbol">
+            <Icon name="game" />
+          </span>
+          Game-On<span className="brand-bang">!</span>
+        </Link>
+        <button
+          className="icon-button"
+          aria-label={open ? "Close navigation" : "Open navigation"}
+          aria-expanded={open}
+          aria-controls="sidebar"
+          onClick={() => setOpen(!open)}
+        >
+          <Icon name={open ? "close" : "menu"} />
+        </button>
+      </header>
+      {open && (
+        <button
+          className="sidebar-backdrop"
+          aria-label="Close navigation"
+          onClick={() => setOpen(false)}
+        />
+      )}
+      <aside
+        id="sidebar"
+        className={`sidebar ${open ? "sidebar-open" : ""}`}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") setOpen(false);
+        }}
+      >
+        <Link
+          href="/"
+          className="brand desktop-brand"
+          onClick={() => setOpen(false)}
+        >
+          <span className="brand-symbol">
+            <Icon name="game" />
+          </span>
+          Game-On<span className="brand-bang">!</span>
+        </Link>
+        <div className="sidebar-label">YOUR NEXT SESSION</div>
+        <nav aria-label="Main navigation">
+          {navigation.map(({ href, label, icon }) => (
+            <Link
+              key={href}
+              href={href}
+              onClick={() => setOpen(false)}
+              className={`nav-link ${pathname === href ? "active" : ""}`}
+              aria-current={pathname === href ? "page" : undefined}
+            >
+              <Icon name={icon} />
+              {label}
+              {pathname === href && <span className="nav-active-dot" />}
+            </Link>
+          ))}
+        </nav>
+        <div className="sidebar-note">
+          <span className="note-icon">
+            <Icon name="game" />
+          </span>
+          <p>
+            Good games start
+            <br />
+            with good teammates.
+          </p>
+          <span>Find your people. Press play.</span>
+        </div>
+        <Link
+          href="/account"
+          className="sidebar-account"
+          onClick={() => setOpen(false)}
+        >
+          <span className="avatar">
+            <Icon name="user" />
+          </span>
+          <span>
+            <strong>
+              {loading ? "Loading account…" : user ? name : "Join the party"}
+            </strong>
+            <small>
+              {user ? "Manage your account" : "Sign in to get started"}
+            </small>
+          </span>
+          <Icon name="arrow" />
+        </Link>
+      </aside>
+      <div className="workspace">
+        <div className="topbar">
+          <span>FIND TEAMMATES. GAME TOGETHER.</span>
+          <Link href="/account" className="topbar-account">
+            <Icon name="user" />
+            {user ? name : "Sign in"}
+          </Link>
+        </div>
+        <main id="main-content" className="main-content">
+          {children}
+        </main>
+        <footer className="site-footer">
+          <span>Game-On! · Better together.</span>
+          <span>A place for your next party.</span>
+        </footer>
+      </div>
+    </div>
+  );
+}

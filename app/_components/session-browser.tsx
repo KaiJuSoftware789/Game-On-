@@ -309,6 +309,7 @@ export default function SessionBrowser() {
             <span className="brand-dot">.</span>
           </Link>
           <nav aria-label="Main navigation">
+            <Link href="/tickets">Live tickets</Link>
             <Link href="/events">Local events</Link>
             <a
               href="#sessions"

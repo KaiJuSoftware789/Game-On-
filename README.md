@@ -63,3 +63,7 @@ Open **Local events** to find tournaments and in-person gaming sessions by U.S. 
 Use **Host an event** to add a venue/address, date and venue time zone, organizer, player limit, and optional registration link. Events can be saved in this browser and shared by link immediately. Recipients can open the invitation and save it to their own event list. Shared local links contain a snapshot, so changed/cancelled events need a new link. A public deployment origin is required for links to work outside the local development machine.
 
 **Public event feed · Coming soon** appears until the existing Supabase project is configured. The prepared public integration supports email sign-in, explicit publishing, nearby discovery, stable share links, and organizer-only cancellation. It does not upload local events automatically. See [local event setup](docs/local-events-setup.md) for the migration and configuration.
+
+## Live tickets and connected accounts
+
+The Supabase-backed live ticket board is available at `/tickets`, with account settings at `/account`, game selections at `/games`, and public player profiles at `/players/<id>`. These routes preserve the connected features from main. Local browsing remains at `/`. See [live ticket and OAuth setup](docs/live-tickets-setup.md).

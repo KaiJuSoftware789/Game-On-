@@ -1,26 +1,40 @@
-import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseConfig } from "@/lib/supabase/config";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { safeNextPath } from "@/lib/auth-config";
 
-export async function GET(request: Request) {
-  const url = new URL(request.url);
-  const code = url.searchParams.get("code");
-  const next =
-    url.searchParams.get("next") === "/events" ? "/events" : "/profile";
-  if (code && hasSupabaseConfig()) {
+function redirectWithinApp(path: string) {
+  // Relative locations preserve the browser's host, including behind a proxy.
+  // All destinations come from the fixed allowlist or the account page below.
+  return new NextResponse(null, {
+    status: 303,
+    headers: { Location: path, "Cache-Control": "no-store" },
+  });
+}
+
+export async function GET(request: NextRequest) {
+  const code = request.nextUrl.searchParams.get("code");
+  const next = safeNextPath(
+    request.nextUrl.searchParams.get("next") ?? "/profile",
+  );
+  if (
+    code &&
+    hasSupabaseConfig() &&
+    !request.nextUrl.searchParams.has("error")
+  ) {
     try {
-      const client = await createClient();
-      const { error } = await client.auth.exchangeCodeForSession(code);
+      const supabase = await createClient();
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
       if (!error)
-        return NextResponse.redirect(
-          new URL(
-            next === "/events" ? next : "/profile#game-accounts",
-            url.origin,
-          ),
+        return redirectWithinApp(
+          next === "/profile" ? "/profile#game-accounts" : next,
         );
     } catch {
-      /* Return a visible retry message without exposing auth details. */
+      /* Show a retry destination without exposing auth details. */
     }
   }
-  return NextResponse.redirect(new URL(`${next}#sign-in-error`, url.origin));
+  if (next === "/events" || next.startsWith("/profile"))
+    return redirectWithinApp(`${next.split("#")[0]}#sign-in-error`);
+  const query = new URLSearchParams({ error: "sign_in_failed", next });
+  return redirectWithinApp(`/account?${query}`);
 }

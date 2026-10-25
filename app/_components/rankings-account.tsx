@@ -105,7 +105,7 @@ export function GameAccountPanel() {
               email,
               password,
               options: {
-                emailRedirectTo: `${window.location.origin}/auth/callback`,
+                emailRedirectTo: `${window.location.origin}/auth/callback?next=/profile`,
               },
             })
           : await client!.auth.signInWithPassword({ email, password });

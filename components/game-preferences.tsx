@@ -1,5 +1,7 @@
 "use client";
 
+import { GameIcon } from "./game-icon";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -26,13 +28,12 @@ export function GamePreferences({
             Your games. <span>Your people.</span>
           </h1>
           <p>
-            Choose the games you play. Your lineup is public so other players
-            can find common ground.
+            Like games from the list, then save to show them on your profile. Your profile privacy settings control who can see them.
           </p>
         </div>
         {user && (
-          <Link href={`/players/${user.id}`} className="button secondary">
-            View public profile
+          <Link href={`/players/${user.id}?from=games`} className="button secondary">
+            View my profile
             <Icon name="arrow" />
           </Link>
         )}
@@ -159,12 +160,12 @@ function GameSelection({ userId, games }: { userId: string; games: Game[] }) {
     selected.some((id) => !saved.includes(id));
 
   return (
-    <section aria-labelledby="games-heading">
+    <section aria-labelledby="games-heading" className={dirty ? "games-with-unsaved-changes" : undefined}>
       <div className="games-heading">
         <h2 id="games-heading">
-          My games <span className="count-badge">{selected.length}</span>
+          Games <span className="count-badge">{selected.length}</span>
         </h2>
-        <span className="muted">Select all that you play</span>
+        <span className="muted">Select the games you like</span>
       </div>
       <div className="game-grid">
         {games.map((game, index) => (
@@ -174,6 +175,7 @@ function GameSelection({ userId, games }: { userId: string; games: Game[] }) {
           >
             <input
               type="checkbox"
+              aria-label={`Like ${game.name}`}
               checked={selected.includes(game.id)}
               disabled={saving}
               onChange={() => {
@@ -186,16 +188,7 @@ function GameSelection({ userId, games }: { userId: string; games: Game[] }) {
                 setError("");
               }}
             />
-            <span className="game-art" aria-hidden="true">
-              <span className="game-monogram">
-                {game.name
-                  .split(/[\s-]+/)
-                  .map((word) => word[0])
-                  .join("")
-                  .slice(0, 3)}
-              </span>
-              <Icon name="game" />
-            </span>
+            <span className="game-art" aria-hidden="true"><GameIcon name={game.name} /></span>
             <span className="game-card-content">
               <strong>{game.name}</strong>
               <small>{game.platform}</small>
@@ -210,15 +203,13 @@ function GameSelection({ userId, games }: { userId: string; games: Game[] }) {
           </label>
         ))}
       </div>
-      <div className="save-bar">
+      {dirty && <div className="save-bar floating-game-save">
         <div>
           <strong>
             {selected.length} {selected.length === 1 ? "game" : "games"}{" "}
-            selected
+            liked
           </strong>
-          <p>
-            {dirty ? "You have unsaved changes." : "Your lineup is up to date."}
-          </p>
+          {dirty && <p>You have unsaved changes.</p>}
         </div>
         <button
           className="button primary"
@@ -228,9 +219,9 @@ function GameSelection({ userId, games }: { userId: string; games: Game[] }) {
           }}
         >
           <Icon name="check" />
-          {saving ? "Saving…" : "Save my games"}
+          {saving ? "Saving…" : "Save liked games"}
         </button>
-      </div>
+      </div>}
       {message && (
         <p className="notice success" role="status">
           {message}

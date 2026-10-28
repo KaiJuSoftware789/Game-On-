@@ -5,11 +5,12 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "./auth-provider";
 import { Icon } from "./icons";
+import { RecentMessages } from "./recent-messages";
 
-const navigation = [
+const baseNavigation = [
   { href: "/", label: "Discover sessions", icon: "game" as const },
   { href: "/events", label: "Local events", icon: "tickets" as const },
-  { href: "/profile", label: "Your profile", icon: "user" as const },
+  { href: "/messages", label: "Messages", icon: "message" as const },
   { href: "/rankings", label: "Rankings", icon: "game" as const },
   { href: "/tickets", label: "Live tickets", icon: "tickets" as const },
   { href: "/games", label: "My games", icon: "game" as const },
@@ -18,9 +19,11 @@ const navigation = [
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { user, loading } = useAuth();
+  const { user, loading, displayName } = useAuth();
   const [open, setOpen] = useState(false);
+  const navigation = [...baseNavigation.slice(0, -1), { href: user ? `/players/${user.id}` : "/profile", label: "Profile", icon: "user" as const }, baseNavigation[baseNavigation.length - 1]];
   const name =
+    displayName ||
     user?.user_metadata?.full_name ||
     user?.user_metadata?.name ||
     user?.email?.split("@")[0] ||
@@ -88,6 +91,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </Link>
           ))}
         </nav>
+        <RecentMessages onNavigate={() => setOpen(false)} />
         <div className="sidebar-note">
           <span className="note-icon">
             <Icon name="game" />
@@ -121,7 +125,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="workspace">
         <div className="topbar">
           <span>FIND TEAMMATES. GAME TOGETHER.</span>
-          <Link href="/account" className="topbar-account">
+          <Link href={user ? `/players/${user.id}` : "/account"} className="topbar-account">
             <Icon name="user" />
             {user ? name : "Sign in"}
           </Link>

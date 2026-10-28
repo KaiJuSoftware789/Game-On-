@@ -14,6 +14,8 @@ export default async function AccountPage({
     <Account
       providers={config.providers}
       configError={config.error}
+      phoneEnabled={config.phoneEnabled}
+      passkeyEnabled={config.passkeyEnabled}
       callbackError={Boolean(params.error)}
       next={safeNextPath(typeof params.next === "string" ? params.next : null)}
     />

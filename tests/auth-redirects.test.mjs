@@ -5,6 +5,8 @@ import { safeNextPath } from "../lib/auth-config.ts";
 test("sign-in destinations support both local and connected flows", () => {
   for (const path of [
     "/events",
+    "/messages",
+    "/players",
     "/profile",
     "/profile#game-accounts",
     "/tickets",

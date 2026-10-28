@@ -22,8 +22,7 @@ do $$ begin
   end;
 end $$;
 
-insert into public.tickets (game_id, title, description, players_needed, region, invite_url)
-values ((select min(id) from public.games), 'Integration check session', '', 2, 'Any region', 'https://example.invalid/invite');
+select public.publish_ticket((select min(id) from public.games), 'Integration check session', '', 2, 'Any region', 'https://example.invalid/invite', false);
 do $$ begin
   assert (select count(*) from public.tickets where host_id = auth.uid() and status = 'open' and expires_at > now()) = 1, 'New ticket is live';
   begin

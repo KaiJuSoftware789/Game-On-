@@ -10,6 +10,8 @@ import {
   type Ticket,
 } from "@/lib/types";
 import { useAuth } from "./auth-provider";
+import { HoldCloseTicket } from "./hold-close-ticket";
+import { DemoTickets } from "./demo-tickets";
 import { Icon } from "./icons";
 
 export function TicketFeed({
@@ -267,7 +269,7 @@ export function TicketFeed({
                   <div className="ticket-details">
                     <span>
                       <Icon name="user" />
-                      {ticket.players_needed}{" "}
+                      {ticket.players_needed >= 10 ? "10+" : ticket.players_needed}{" "}
                       {ticket.players_needed === 1 ? "player" : "players"}{" "}
                       wanted
                     </span>
@@ -302,15 +304,7 @@ export function TicketFeed({
                       </a>
                     )}
                     {user?.id === ticket.host_id && (
-                      <button
-                        className="button quiet"
-                        onClick={() => {
-                          void closeTicket(ticket.id);
-                        }}
-                        disabled={closing === ticket.id}
-                      >
-                        {closing === ticket.id ? "Closing…" : "Close ticket"}
-                      </button>
+                      <HoldCloseTicket busy={closing === ticket.id} onConfirm={() => { void closeTicket(ticket.id); }} />
                     )}
                   </div>
                 </article>
@@ -319,19 +313,7 @@ export function TicketFeed({
           </div>
         )}
       </section>
-      <div className="bottom-callout">
-        <span className="callout-icon">
-          <Icon name="game" />
-        </span>
-        <div>
-          <h3>Your games. Your kind of people.</h3>
-          <p>Add the games you play to make yourself at home.</p>
-        </div>
-        <Link href="/games" className="text-link">
-          Choose my games
-          <Icon name="arrow" />
-        </Link>
-      </div>
+      <DemoTickets games={games} gameFilter={gameFilter} />
     </>
   );
 }

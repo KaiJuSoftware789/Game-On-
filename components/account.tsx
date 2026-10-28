@@ -7,19 +7,24 @@ import type { SignInProvider } from "@/lib/auth-config";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "./auth-provider";
 import { Icon } from "./icons";
+import { PhoneSignIn, Passkeys } from "./passwordless-auth";
 
 export function Account({
   providers,
   configError,
   callbackError,
   next,
+  phoneEnabled,
+  passkeyEnabled,
 }: {
   providers: SignInProvider[];
   configError: boolean;
   callbackError: boolean;
   next: string;
+  phoneEnabled: boolean;
+  passkeyEnabled: boolean;
 }) {
-  const { user, loading } = useAuth();
+  const { user, loading, displayName } = useAuth();
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
@@ -78,11 +83,13 @@ export function Account({
         ) : user ? (
           <>
             <h2>
-              {user.user_metadata?.full_name ||
+              {displayName || user.user_metadata?.full_name ||
                 user.user_metadata?.name ||
                 "Player"}
             </h2>
             {user.email && <p className="muted">{user.email}</p>}
+            {user.phone && <p className="muted">+{user.phone.replace(/^\+/, "")}</p>}
+            {passkeyEnabled && <Passkeys key={user.id} signedIn next={next} />}
             <div className="account-facts">
               <span>Signed in with</span>
               <strong>
@@ -96,21 +103,12 @@ export function Account({
                   .join(", ")}
               </strong>
             </div>
-            <Link href="/games" className="button primary">
+            <Link href="/games" className="button secondary account-action">
               <Icon name="game" />
               Manage my games
               <Icon name="arrow" />
             </Link>
-            <button
-              className="button quiet signout-button"
-              disabled={Boolean(busy)}
-              onClick={() => {
-                void signOut();
-              }}
-            >
-              <Icon name="logout" />
-              {busy ? "Signing out…" : "Sign out"}
-            </button>
+
           </>
         ) : (
           <>
@@ -119,6 +117,7 @@ export function Account({
               Sign in to post tickets and save the games you play.
             </p>
             <div className="provider-list">
+              {passkeyEnabled && <Passkeys signedIn={false} next={next} disabled={Boolean(busy)} />}
               {providers.map((provider) => (
                 <button
                   key={provider.id}
@@ -147,9 +146,11 @@ export function Account({
                 </button>
               ))}
             </div>
+            <PhoneSignIn enabled={phoneEnabled} disabled={Boolean(busy)} next={next} />
             {configError ? (
               <p className="notice error" role="alert">
-                Sign-in is temporarily unavailable.{" "}
+                We couldn’t connect to the sign-in service. Please try again once
+                the connection is restored.{" "}
                 <button
                   className="inline-button"
                   onClick={() => router.refresh()}
@@ -160,13 +161,13 @@ export function Account({
             ) : (
               providers.some((provider) => !provider.enabled) && (
                 <p className="sign-in-note">
-                  Some sign-in options are still being connected. They’ll be
-                  available once setup is complete.
+                  Options marked unavailable haven’t been enabled yet. Choose an
+                  available provider to sign in.
                 </p>
               )
             )}
             <div className="account-divider" />
-            <Link href="/" className="text-link">
+            <Link href="/tickets" className="text-link">
               Browse live tickets
               <Icon name="arrow" />
             </Link>
@@ -174,10 +175,11 @@ export function Account({
         )}
         {user && (
           <Link
-            href={`/players/${user.id}`}
-            className="text-link public-profile-link"
+            href={`/players/${user.id}?edit=true`}
+            className="button secondary account-action public-profile-link"
           >
-            View public profile
+            <Icon name="user" />
+            Edit profile
             <Icon name="arrow" />
           </Link>
         )}
@@ -186,6 +188,18 @@ export function Account({
             {error ||
               "Sign-in wasn’t completed. Please try again using one of the options above."}
           </p>
+        )}
+        {user && (
+            <button
+              className="button quiet signout-button"
+              disabled={Boolean(busy)}
+              onClick={() => {
+                void signOut();
+              }}
+            >
+              <Icon name="logout" />
+              {busy ? "Signing out…" : "Sign out"}
+            </button>
         )}
       </section>
     </>

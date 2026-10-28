@@ -8,6 +8,9 @@ import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "./auth-provider";
 import { Icon } from "./icons";
 import { PhoneSignIn, Passkeys } from "./passwordless-auth";
+import { PasskeyMfa } from "./passkey-mfa";
+import { AccountInfo } from "./account-info";
+import { ManageConnections } from "./manage-connections";
 
 export function Account({
   providers,
@@ -87,22 +90,10 @@ export function Account({
                 user.user_metadata?.name ||
                 "Player"}
             </h2>
-            {user.email && <p className="muted">{user.email}</p>}
-            {user.phone && <p className="muted">+{user.phone.replace(/^\+/, "")}</p>}
+            <AccountInfo key={`info-${user.id}`} />
+            <PasskeyMfa key={`mfa-${user.id}`} />
             {passkeyEnabled && <Passkeys key={user.id} signedIn next={next} />}
-            <div className="account-facts">
-              <span>Signed in with</span>
-              <strong>
-                {(user.app_metadata.providers ?? [user.app_metadata.provider])
-                  .filter((provider): provider is string => Boolean(provider))
-                  .map((provider: string) =>
-                    provider.startsWith("custom:")
-                      ? "Riot Games"
-                      : provider.charAt(0).toUpperCase() + provider.slice(1),
-                  )
-                  .join(", ")}
-              </strong>
-            </div>
+            <ManageConnections key={`connections-${user.id}`} providers={providers} />
             <Link href="/games" className="button secondary account-action">
               <Icon name="game" />
               Manage my games
@@ -172,16 +163,6 @@ export function Account({
               <Icon name="arrow" />
             </Link>
           </>
-        )}
-        {user && (
-          <Link
-            href={`/players/${user.id}?edit=true`}
-            className="button secondary account-action public-profile-link"
-          >
-            <Icon name="user" />
-            Edit profile
-            <Icon name="arrow" />
-          </Link>
         )}
         {(error || (callbackError && !user)) && (
           <p className="notice error" role="alert">

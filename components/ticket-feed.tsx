@@ -11,7 +11,6 @@ import {
 } from "@/lib/types";
 import { useAuth } from "./auth-provider";
 import { HoldCloseTicket } from "./hold-close-ticket";
-import { DemoTickets } from "./demo-tickets";
 import { Icon } from "./icons";
 
 export function TicketFeed({
@@ -313,7 +312,6 @@ export function TicketFeed({
           </div>
         )}
       </section>
-      <DemoTickets games={games} gameFilter={gameFilter} />
     </>
   );
 }

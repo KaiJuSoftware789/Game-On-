@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import {
   useEffect,
   useMemo,
@@ -376,38 +375,10 @@ export default function EventsBrowser() {
   ].sort();
   return (
     <>
-      <a className="skip-link" href="#local-events">
-        Skip to local events
-      </a>
-      <header className="site-header">
-        <div className="header-inner">
-          <Link className="brand" href="/" aria-label="Game On home">
-            <span className="brand-mark">
-              <Icon name="gamepad" />
-            </span>
-            game<span className="brand-on">on</span>
-            <span className="brand-dot">.</span>
-          </Link>
-          <nav aria-label="Main navigation">
-            <Link href="/#sessions">Discover</Link>
-            <Link href="/events" className="nav-active" aria-current="page">
-              Local events
-            </Link>
-            <Link href="/profile">Your profile</Link>
-            <Link href="/rankings">Rankings</Link>
-          </nav>
-          <button
-            className="button button-primary header-create"
-            type="button"
-            onClick={() => setCreating(true)}
-          >
-            <Icon name="plus" />
-            <span>Host an event</span>
-          </button>
-        </div>
-      </header>
-      <main id="local-events" className="page-shell local-events-page">
+
+      <div id="local-events" className="page-shell local-events-page">
         <section className="events-hero">
+          <button className="button button-primary discovery-create" onClick={() => setCreating(true)}><Icon name="plus" /> Create an event</button>
           <div>
             <span className="eyebrow">
               <Icon name="pin" />
@@ -701,14 +672,8 @@ export default function EventsBrowser() {
             </div>
           )}
         </section>
-        <footer className="site-footer">
-          <span className="footer-brand">gameon.</span>
-          <span>Good games bring people together.</span>
-          <Link href="/#sessions">
-            Find an online squad <Icon name="arrow" />
-          </Link>
-        </footer>
-      </main>
+
+      </div>
       {creating && (
         <CreateLocalEvent
           games={games}

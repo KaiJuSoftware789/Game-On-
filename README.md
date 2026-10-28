@@ -33,6 +33,26 @@ Session data uses the `game-on:sessions:v1` local-storage key and synchronizes b
 
 ## Phone passwordless sign-in and passkeys
 
+### Manage Connections
+
+Account lists linked Supabase identities under Manage Connections. Edit opens provider-managed settings or lets a user replace the connected account. Removing/replacing requires at least two existing identities, and replacement disconnects the old provider before starting the new linking flow. Canceling OAuth leaves that provider disconnected; the other sign-in method remains available. Missing OAuth connections can be added using Connect. Enable Manual Linking in hosted Supabase Auth settings; `enable_manual_linking=true` is configured locally. Email and phone identity details are edited through Account Info. Third-party passwords and profile settings are managed by their provider.
+
+### Account info editing
+
+Account Info shows the public username and masked connected email/phone, with Reveal and Edit controls. Editing starts a ten-minute request tied to the current user and session. Reauthenticate with the current password or an existing connected sign-in method, complete any enrolled 2FA, then save. Email and phone changes require Supabase's contact confirmation flow. Passwords are never saved in browser storage; pending edit values survive OAuth redirects in session storage.
+
+Apply `20261028110000_account_edit_verification.sql` and run `supabase/tests/account_edit_verification.sql`. These checks enforce fresh authentication and a later second factor on the account editor's server endpoint, with single-use edit requests. Existing Supabase Auth contact-change confirmation settings must remain enabled. OAuth providers control their own consent and credential prompts; the app never asks for a Google or Discord password. A reauthentication must return to the same Game-On account. Real email/SMS delivery and WebAuthn device prompts require manual verification with configured providers.
+
+### Passkey two-factor authentication
+
+Signed-in users can enable a separate WebAuthn second factor in Account → Two-factor authentication. This requires approval after the initial sign-in and supports adding backup passkeys and removing factors after verification. Passwordless sign-in passkeys and MFA passkeys are separate enrollments. WebAuthn MFA is experimental in the Supabase SDK.
+
+Enable WebAuthn MFA enrollment and verification in Supabase Auth, with the correct relying-party domain/origins. The local config enables `auth.mfa.web_authn`; restart the local Supabase stack to apply Auth settings. Use a stable hostname (localhost and 127.0.0.1 are different passkey domains).
+
+Apply `20261028100000_passkey_mfa.sql` before allowing enrollment in production. It adds restrictive policies for existing public RLS tables and sets the PostgREST pre-request hook `public.require_mfa` to protect RPCs that bypass RLS. If you already have a custom pre-request hook, combine its checks with this function rather than replacing it. New RLS tables should add the same MFA policy. The migration does not affect unenrolled users. Test using `supabase/tests/passkey_mfa.sql`.
+
+Keep at least one backup second-factor device. Recovery from losing every second factor requires a trusted account recovery process; no automatic email bypass is provided.
+
 Account supports SMS sign-in codes alongside social sign-in. Enter a phone number including its country code, request a code, and verify it to sign in or create an account. Codes are verified by Supabase; the app never stores them. Phone numbers remain in Auth and are not copied into public profiles. Signing in with a new phone number creates a separate account from an existing social account; this flow does not link accounts.
 
 For hosted Supabase, enable **Authentication → Providers → Phone**, allow phone signups, and configure an SMS provider such as Twilio. Keep credentials in Supabase. Configure server-side SMS rate limits and spend limits before public rollout; the UI's 60-second resend timer is only a convenience. The phone form reads availability from Supabase's Auth settings.

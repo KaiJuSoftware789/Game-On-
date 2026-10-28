@@ -9,7 +9,6 @@ import { RecentMessages } from "./recent-messages";
 
 const baseNavigation = [
   { href: "/", label: "Discover sessions", icon: "game" as const },
-  { href: "/events", label: "Local events", icon: "tickets" as const },
   { href: "/messages", label: "Messages", icon: "message" as const },
   { href: "/rankings", label: "Rankings", icon: "game" as const },
   { href: "/tickets", label: "Live tickets", icon: "tickets" as const },
@@ -21,7 +20,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, loading, displayName } = useAuth();
   const [open, setOpen] = useState(false);
-  const navigation = [...baseNavigation.slice(0, -1), { href: user ? `/players/${user.id}` : "/profile", label: "Profile", icon: "user" as const }, baseNavigation[baseNavigation.length - 1]];
+  const navigation = baseNavigation;
   const name =
     displayName ||
     user?.user_metadata?.full_name ||
@@ -68,12 +67,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Link
           href="/"
           className="brand desktop-brand"
+          aria-label="Game-On home"
           onClick={() => setOpen(false)}
         >
           <span className="brand-symbol">
             <Icon name="game" />
           </span>
-          Game-On<span className="brand-bang">!</span>
+          <span className="sidebar-brand-text">Game-On<span className="brand-bang">!</span></span>
         </Link>
         <div className="sidebar-label">YOUR NEXT SESSION</div>
         <nav aria-label="Main navigation">
@@ -81,13 +81,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Link
               key={href}
               href={href}
+              aria-label={label}
+              title={label}
               onClick={() => setOpen(false)}
-              className={`nav-link ${pathname === href ? "active" : ""}`}
+              className={`nav-link ${(pathname === href || (href === "/tickets" && pathname.startsWith("/tickets/"))) ? "active" : ""}`}
               aria-current={pathname === href ? "page" : undefined}
             >
               <Icon name={icon} />
-              {label}
-              {pathname === href && <span className="nav-active-dot" />}
+              <span className="nav-label">{label}</span>
             </Link>
           ))}
         </nav>
@@ -104,8 +105,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span>Find your people. Press play.</span>
         </div>
         <Link
-          href="/account"
+          href={user ? `/players/${user.id}` : "/account"}
           className="sidebar-account"
+          aria-label={user ? `${name}: View your profile` : "Sign in to get started"}
+          title={user ? "View your profile" : "Sign in"}
           onClick={() => setOpen(false)}
         >
           <span className="avatar">
@@ -116,7 +119,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               {loading ? "Loading account…" : user ? name : "Join the party"}
             </strong>
             <small>
-              {user ? "Manage your account" : "Sign in to get started"}
+              {user ? "View your profile" : "Sign in to get started"}
             </small>
           </span>
           <Icon name="arrow" />
@@ -125,7 +128,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="workspace">
         <div className="topbar">
           <span>FIND TEAMMATES. GAME TOGETHER.</span>
-          <Link href={user ? `/players/${user.id}` : "/account"} className="topbar-account">
+          <Link href="/account" className="topbar-account">
             <Icon name="user" />
             {user ? name : "Sign in"}
           </Link>
@@ -133,10 +136,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <main id="main-content" className="main-content">
           {children}
         </main>
-        <footer className="site-footer">
-          <span>Game-On! · Better together.</span>
-          <span>A place for your next party.</span>
-        </footer>
       </div>
     </div>
   );

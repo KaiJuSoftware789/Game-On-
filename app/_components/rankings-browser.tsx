@@ -15,7 +15,7 @@ import {
 } from "@/lib/session-store";
 import { queuesForGame, type RankingBoard } from "@/lib/rankings";
 import { Icon } from "./icon";
-import { GameSections, GameSectionBadge } from "./game-section";
+import { GameSectionBadge } from "./game-section";
 import { useRankingService } from "./rankings-connection";
 
 const getServerSnapshot = () => null;
@@ -34,9 +34,9 @@ export default function RankingsBrowser() {
     [gameRaw],
   );
   const games = useMemo(() => [...GAMES, ...library.games], [library.games]);
-  const [section, setSection] = useState<GameSection>("all");
-  const [selection, setSelection] = useState("valorant");
-  const [mode, setMode] = useState("competitive");
+  const section: GameSection = "all";
+  const selection = "valorant";
+  const mode = "competitive";
   const [offset, setOffset] = useState(0);
   const [response, setResponse] = useState<{
     key: string;
@@ -81,15 +81,6 @@ export default function RankingsBrowser() {
     };
   }, [client, queue, offset, queryKey]);
 
-  function changeSection(next: GameSection) {
-    setSection(next);
-    setOffset(0);
-    setMode("");
-    if (!game || !matchesGameSection(game.id, next))
-      setSelection(
-        games.find((item) => matchesGameSection(item.id, next))?.id || "",
-      );
-  }
   const storageError =
     gameRaw === STORAGE_UNAVAILABLE
       ? "Browser storage is unavailable. You can still browse public ranks."
@@ -97,33 +88,8 @@ export default function RankingsBrowser() {
 
   return (
     <>
-      <a className="skip-link" href="#rankings">
-        Skip to rankings
-      </a>
-      <header className="site-header">
-        <div className="header-inner">
-          <Link className="brand" href="/" aria-label="Game On home">
-            <span className="brand-mark">
-              <Icon name="gamepad" />
-            </span>
-            game<span className="brand-on">on</span>
-            <span className="brand-dot">.</span>
-          </Link>
-          <nav aria-label="Main navigation">
-            <Link href="/events">Local events</Link>
-            <Link href="/#sessions">Discover</Link>
-            <Link href="/profile">Your profile</Link>
-            <Link href="/rankings" aria-current="page" className="nav-active">
-              Rankings
-            </Link>
-          </nav>
-          <Link href="/profile" className="button button-outline header-create">
-            <Icon name="players" />
-            <span>Your player card</span>
-          </Link>
-        </div>
-      </header>
-      <main className="page-shell rankings-page" id="rankings">
+
+      <div className="page-shell rankings-page" id="rankings">
         <section className="rankings-hero" aria-labelledby="ranking-title">
           <div>
             <span className="eyebrow">
@@ -135,10 +101,7 @@ export default function RankingsBrowser() {
               <br />
               <span className="accent">Your in-game ranks.</span>
             </h1>
-            <p>
-              See the rank players hold in game, starting with VALORANT
-              Competitive.
-            </p>
+
           </div>
           <div className="ranking-hero-mark" aria-hidden="true">
             <Icon name="trophy" />
@@ -149,73 +112,12 @@ export default function RankingsBrowser() {
             </span>
           </div>
         </section>
-        {client && (
-          <div className="ranking-mode-notice is-public">
-            <Icon name="globe" />
-            <div>
-              <strong>Public in-game ranks</strong>
-              <p>Players appear here once their in-game ranks are available.</p>
-            </div>
-            {client && (
-              <button
-                className="button button-outline"
-                type="button"
-                onClick={refresh}
-              >
-                Refresh
-              </button>
-            )}
-          </div>
-        )}
         {storageError && (
           <p role="alert" className="error-banner">
             {storageError}
           </p>
         )}
-        <section className="rankings-controls" aria-label="Leaderboard filters">
-          <GameSections value={section} onChange={changeSection} />
-          <label className="field ranking-game-select">
-            Game
-            <select
-              aria-label="Game"
-              value={game?.id || ""}
-              disabled={!choices.length}
-              onChange={(event) => {
-                setSelection(event.target.value);
-                setMode("");
-                setOffset(0);
-              }}
-            >
-              {!choices.length && (
-                <option value="">No games in this section</option>
-              )}
-              {choices.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          {queue && (
-            <label className="field ranking-game-select">
-              Ranked mode
-              <select
-                aria-label="Ranked mode"
-                value={queue.id}
-                onChange={(event) => {
-                  setMode(event.target.value);
-                  setOffset(0);
-                }}
-              >
-                {queues.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-        </section>
+
         <div
           className={`rankings-layout ${!queue ? "rankings-layout-empty" : ""}`}
         >
@@ -411,7 +313,7 @@ export default function RankingsBrowser() {
             </aside>
           )}
         </div>
-      </main>
+      </div>
     </>
   );
 }

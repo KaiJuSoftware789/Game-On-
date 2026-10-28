@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import RankingsBrowser from "../_components/rankings-browser";
+import RankingsBrowser from "@/app/_components/rankings-browser";
 
 export const metadata: Metadata = {
   title: "Rankings · Game On",
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function RankingsPage() {
-  return <RankingsBrowser />;
+  return <div className="discovery-pages"><RankingsBrowser /></div>;
 }

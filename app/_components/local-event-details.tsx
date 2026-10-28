@@ -45,7 +45,7 @@ export function LocalEventDetails({
     setNotice("");
     const url =
       item.source === "public"
-        ? `${window.location.origin}/events?event=${event.id}`
+        ? `${window.location.origin}/tickets/events?event=${event.id}`
         : eventShareUrl(event, window.location.origin);
     setShareLink(url);
     try {

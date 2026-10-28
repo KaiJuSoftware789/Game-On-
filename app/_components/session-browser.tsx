@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState, useSyncExternalStore } from "react";
-import Link from "next/link";
 import {
   GAMES,
   PLATFORMS,
@@ -291,55 +290,8 @@ export default function SessionBrowser() {
 
   return (
     <>
-      <a className="skip-link" href="#sessions">
-        Skip to sessions
-      </a>
-      <header className="site-header">
-        <div className="header-inner">
-          <Link
-            className="brand"
-            href="/"
-            aria-label="Game On home"
-            onClick={() => selectView("all")}
-          >
-            <span className="brand-mark">
-              <Icon name="gamepad" />
-            </span>
-            game<span className="brand-on">on</span>
-            <span className="brand-dot">.</span>
-          </Link>
-          <nav aria-label="Main navigation">
-            <Link href="/tickets">Live tickets</Link>
-            <Link href="/events">Local events</Link>
-            <a
-              href="#sessions"
-              onClick={() => selectView("all")}
-              className={view === "all" ? "nav-active" : ""}
-            >
-              Discover
-            </a>
-            <a
-              href="#sessions"
-              onClick={() => selectView("mine")}
-              className={view === "mine" ? "nav-active" : ""}
-            >
-              Your sessions
-              <span className="nav-count">{stored.sessions.length}</span>
-            </a>
-            <Link href="/profile">Your profile</Link>
-            <Link href="/rankings">Rankings</Link>
-          </nav>
-          <button
-            type="button"
-            className="button button-primary header-create"
-            onClick={() => setShowCreate(true)}
-          >
-            <Icon name="plus" />
-            <span>Create session</span>
-          </button>
-        </div>
-      </header>
-      <main className="page-shell">
+
+      <div className="page-shell">
         <section className="hero" aria-labelledby="hero-title">
           <div className="hero-copy">
             <span className="eyebrow">
@@ -699,12 +651,8 @@ export default function SessionBrowser() {
             </button>
           </div>
         </section>
-        <footer className="site-footer">
-          <span className="footer-brand">gameon.</span>
-          <span>Good games bring people together.</span>
-          <span className="footer-note">Built for the love of playing.</span>
-        </footer>
-      </main>
+
+      </div>
       {showCreate && (
         <CreateSession
           games={games}

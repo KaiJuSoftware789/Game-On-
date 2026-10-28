@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AuthProvider } from "@/components/auth-provider";
 import { AppShell } from "@/components/app-shell";
+import { PasskeyMfa } from "@/components/passkey-mfa";
 import { hasSupabaseConfig } from "@/lib/supabase/config";
 import "./connected.css";
 
@@ -23,7 +24,7 @@ export default function ConnectedLayout({
   return (
     <div className="live-app">
       <AuthProvider>
-        <AppShell>{children}</AppShell>
+        <AppShell><PasskeyMfa gate>{children}</PasskeyMfa></AppShell>
       </AuthProvider>
     </div>
   );

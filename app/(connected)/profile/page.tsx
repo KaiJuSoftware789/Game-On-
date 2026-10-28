@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PlayerProfile from "../_components/player-profile";
+import PlayerProfile from "@/app/_components/player-profile";
 
 export const metadata: Metadata = {
   title: "Your profile · Game On",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function ProfilePage() {
-  return <PlayerProfile />;
+  return <div className="discovery-pages"><PlayerProfile /></div>;
 }

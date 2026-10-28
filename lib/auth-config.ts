@@ -54,6 +54,7 @@ export function safeNextPath(value: string | null | undefined) {
     "/tickets",
     "/tickets/new",
     "/events",
+    "/tickets/events",
     "/players",
     "/messages",
     "/profile",

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState, useSyncExternalStore } from "react";
 import {
   GAMES,
@@ -90,36 +89,8 @@ export default function PlayerProfile() {
 
   return (
     <>
-      <a className="skip-link" href="#profile">
-        Skip to profile
-      </a>
-      <header className="site-header">
-        <div className="header-inner">
-          <Link className="brand" href="/" aria-label="Game On home">
-            <span className="brand-mark">
-              <Icon name="gamepad" />
-            </span>
-            game<span className="brand-on">on</span>
-            <span className="brand-dot">.</span>
-          </Link>
-          <nav aria-label="Main navigation">
-            <Link href="/events">Local events</Link>
-            <Link href="/#sessions">Discover</Link>
-            <Link href="/profile" aria-current="page" className="nav-active">
-              Your profile
-            </Link>
-            <Link href="/rankings">Rankings</Link>
-          </nav>
-          <Link
-            href="/#sessions"
-            className="button button-outline header-create"
-          >
-            <Icon name="players" />
-            <span>Find a squad</span>
-          </Link>
-        </div>
-      </header>
-      <main id="profile" className="page-shell profile-page">
+
+      <div id="profile" className="page-shell profile-page">
         <div className="profile-page-heading">
           <span className="eyebrow">YOUR PLAYER CARD</span>
           <span className="demo-label">
@@ -474,14 +445,8 @@ export default function PlayerProfile() {
             <Icon name="plus" />
           </button>
         </div>
-        <footer className="site-footer">
-          <span className="footer-brand">gameon.</span>
-          <span>Good games bring people together.</span>
-          <Link href="/#sessions">
-            Back to sessions <span aria-hidden="true">↗</span>
-          </Link>
-        </footer>
-      </main>
+
+      </div>
       {editor?.type === "profile" && (
         <ProfileEditor
           profile={profile}

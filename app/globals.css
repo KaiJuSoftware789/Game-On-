@@ -1338,3 +1338,32 @@ label.game-card:hover {
 .hold-close-progress { position: absolute; inset: 0; background: #a84d383d; transform: scaleX(0); transform-origin: left; pointer-events: none; }
 .hold-close-ticket.holding .hold-close-progress { transform: scaleX(1); transition: transform 1s linear; }
 @media (prefers-reduced-motion: reduce) { .hold-close-ticket.holding .hold-close-progress { transition: none; } }
+.game-art .catalog-game-icon { width: 76px; height: 76px; opacity: 1; transform: none; position: static; flex-shrink: 0; }
+.game-art { position: relative; padding: 0; }
+.games-with-unsaved-changes { padding-bottom: 120px; }
+.floating-game-save { position: fixed; z-index: 30; bottom: 24px; left: calc(50% + 120px); transform: translateX(-50%); width: min(680px, calc(100vw - 300px)); margin: 0; box-shadow: 0 12px 45px #0009; border-color: #50633d; }
+@media (max-width: 1000px) { .floating-game-save { left: 50%; width: calc(100% - 32px); bottom: 16px; } }
+@media (max-width: 420px) { .floating-game-save { gap: 10px; padding: 12px; } .floating-game-save p { max-width: 130px; } }
+.profile-return-games { margin-bottom: 22px; }
+.profile-edit-buttons { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.account-action { min-width: 240px; transition: background-color 500ms ease, color 500ms ease, border-color 500ms ease; } .account-action:hover:not(:disabled) { background: var(--accent); border-color: var(--accent); color: #17230d; }
+
+.floating-game-save .button.primary { background: #1c222b; color: #e4e9ef; border-color: #343d49; transition: background-color 500ms ease, color 500ms ease, border-color 500ms ease; }
+.floating-game-save .button.primary:hover:not(:disabled) { background: var(--accent); color: #17230d; border-color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .floating-game-save .button.primary { transition: none; } }
+/* A quieter account card with soft emphasis on actions. */
+.account-panel { background: #11161d; border-color: #252d37; box-shadow: 0 12px 40px #00000014; padding: 36px 32px; }
+.account-panel .large-icon { background: #1d2921; border-color: #354437; color: #a9bca3; width: 48px; height: 48px; border-radius: 16px; margin-bottom: 22px; }
+.account-panel h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
+.account-panel > .muted { color: #929caa; }
+.account-panel .account-facts { margin: 26px 0; font-size: 12px; }
+.account-panel .account-facts strong { font-weight: 500; color: #bfc8d3; }
+.account-panel .account-action { background: #191f27; color: #cbd3dc; border-color: #303944; font-weight: 500; min-width: 240px; }
+.account-panel .account-action:hover:not(:disabled) { background: #2d4131; color: #d6e8cb; border-color: #59734e; }
+.account-panel .public-profile-link { display: flex; width: fit-content; margin-top: 12px; }
+.account-panel .signout-button { margin-top: 30px; color: #8f99a6; font-size: 11px; }
+.account-panel .signout-button:hover:not(:disabled) { background: #1b222b; color: #ccd3dc; }
+@media (max-width: 760px) { .account-panel { padding: 28px 22px; } }
+.account-panel .account-facts { padding: 0; }
+.account-panel .account-action { transition: background-color 1s cubic-bezier(0.22, 1, 0.36, 1), color 1s ease, border-color 1s ease; } .account-panel .account-action:hover:not(:disabled) { background: var(--accent); color: #17230d; border-color: var(--accent); } @media (prefers-reduced-motion: reduce) { .account-panel .account-action { transition: none; } }
+.profile-edit-page { width: 100%; max-width: 600px; margin-inline: auto; } .profile-edit-page > .profile-editor { width: 100%; }

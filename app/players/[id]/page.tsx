@@ -1,3 +1,4 @@
+import { GameIcon } from "@/components/game-icon";
 import { gamingPlatforms } from "@/lib/gaming-accounts";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -5,15 +6,19 @@ import { createClient } from "@/lib/supabase/server";
 import type { Game } from "@/lib/types";
 import { Icon } from "@/components/icons";
 import { ProfileActions } from "@/components/profile-actions";
+import { ProfileEditor } from "@/components/profile-editor";
 import { ProfileFriendship } from "@/components/profile-friendship";
 import { MessagePlayer } from "@/components/recent-messages";
 
 export default async function PlayerPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ from?: string; edit?: string }>;
 }) {
   const { id } = await params;
+  const { from, edit } = await searchParams;
   if (
     !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
   )
@@ -48,6 +53,17 @@ export default async function PlayerPage({
       </div>
     );
   if (!profile.data) notFound();
+  if (edit === "true") {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user?.id === id) return (
+      <div className="profile-edit-page">
+        <Link href={`/players/${id}`} className="button secondary profile-return-games">Go back</Link>
+        <section className="panel profile-editor" aria-label="Edit profile">
+          <ProfileEditor userId={id} />
+        </section>
+      </div>
+    );
+  }
   const selectedIds = new Set(
     (selections.data ?? []).map((selection) => selection.game_id),
   );
@@ -56,7 +72,7 @@ export default async function PlayerPage({
     <>
       <div className="page-heading">
         <div>
-          <div className="profile-heading-actions"><ProfileActions playerId={id} playerName={profile.data.display_name} placement="header" /></div>
+          <div className="profile-heading-actions"><ProfileActions playerId={id} playerName={profile.data.display_name} placement="header" showGoBack={from === "games"} initiallyEditing={edit === "true"} /></div>
           <h1>{profile.data.display_name}</h1>
           {details.data?.bio && <p className="profile-bio">{details.data.bio}</p>}
         </div>
@@ -72,7 +88,7 @@ export default async function PlayerPage({
         {gamingPlatforms.some(platform=>details.data?.gaming_accounts?.[platform.id]) && <section className="profile-gaming-accounts" aria-labelledby="gaming-accounts-heading"><h2 id="gaming-accounts-heading">Connections</h2><p className="muted">User-provided handles · Unverified</p><div className="gaming-account-grid">{gamingPlatforms.filter(platform=>details.data?.gaming_accounts?.[platform.id]).map(platform=><div className="panel gaming-account" key={platform.id}><strong>{platform.name}</strong><span>{String(details.data!.gaming_accounts[platform.id])}</span></div>)}</div></section>}
         <div className="games-heading">
           <h2 id="player-games">
-            Games I play <span className="count-badge">{games.length}</span>
+            Games <span className="count-badge">{games.length}</span>
           </h2>
         </div>
         {games.length ? (
@@ -82,16 +98,7 @@ export default async function PlayerPage({
                 key={game.id}
                 className={`game-card game-color-${index % 5}`}
               >
-                <span className="game-art" aria-hidden="true">
-                  <span className="game-monogram">
-                    {game.name
-                      .split(/[\s-]+/)
-                      .map((word) => word[0])
-                      .join("")
-                      .slice(0, 3)}
-                  </span>
-                  <Icon name="game" />
-                </span>
+                <span className="game-art" aria-hidden="true"><GameIcon name={game.name} /></span>
                 <span className="game-card-content">
                   <strong>{game.name}</strong>
                   <small>{game.platform}</small>
@@ -104,8 +111,8 @@ export default async function PlayerPage({
             <span className="empty-icon">
               <Icon name="game" />
             </span>
-            <h2>No games selected yet</h2>
-            <p>This player hasn’t added any games to their lineup.</p>
+            <h2>No games added yet</h2>
+            <p>This player hasn’t added any games yet.</p>
           </div>
         )}
         </>}

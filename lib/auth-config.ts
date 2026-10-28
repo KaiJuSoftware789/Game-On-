@@ -43,7 +43,7 @@ export async function getSignInProviders(): Promise<{
 }
 
 export function safeNextPath(value: string | null | undefined) {
-  return ["/", "/games", "/account", "/tickets/new", "/players", "/messages"].includes(value ?? "")
+  return ["/", "/games", "/account", "/tickets/new", "/players", "/messages", "/profile"].includes(value ?? "")
     ? value!
     : "/games";
 }

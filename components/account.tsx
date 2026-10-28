@@ -96,21 +96,12 @@ export function Account({
                   .join(", ")}
               </strong>
             </div>
-            <Link href="/games" className="button primary">
+            <Link href="/games" className="button secondary account-action">
               <Icon name="game" />
               Manage my games
               <Icon name="arrow" />
             </Link>
-            <button
-              className="button quiet signout-button"
-              disabled={Boolean(busy)}
-              onClick={() => {
-                void signOut();
-              }}
-            >
-              <Icon name="logout" />
-              {busy ? "Signing out…" : "Sign out"}
-            </button>
+
           </>
         ) : (
           <>
@@ -175,10 +166,11 @@ export function Account({
         )}
         {user && (
           <Link
-            href={`/players/${user.id}`}
-            className="button secondary public-profile-link"
+            href={`/players/${user.id}?edit=true`}
+            className="button secondary account-action public-profile-link"
           >
-            View and edit my profile
+            <Icon name="user" />
+            Edit profile
             <Icon name="arrow" />
           </Link>
         )}
@@ -187,6 +179,18 @@ export function Account({
             {error ||
               "Sign-in wasn’t completed. Please try again using one of the options above."}
           </p>
+        )}
+        {user && (
+            <button
+              className="button quiet signout-button"
+              disabled={Boolean(busy)}
+              onClick={() => {
+                void signOut();
+              }}
+            >
+              <Icon name="logout" />
+              {busy ? "Signing out…" : "Sign out"}
+            </button>
         )}
       </section>
     </>

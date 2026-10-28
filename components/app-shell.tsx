@@ -7,9 +7,9 @@ import { useAuth } from "./auth-provider";
 import { Icon } from "./icons";
 import { RecentMessages } from "./recent-messages";
 
-const navigation = [
+const baseNavigation = [
   { href: "/", label: "Live tickets", icon: "tickets" as const },
-  { href: "/games", label: "My games", icon: "game" as const },
+  { href: "/games", label: "Games", icon: "game" as const },
   { href: "/messages", label: "Messages", icon: "message" as const },
   { href: "/account", label: "Account", icon: "user" as const },
 ];
@@ -18,6 +18,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, loading, displayName } = useAuth();
   const [open, setOpen] = useState(false);
+  const navigation = [...baseNavigation.slice(0, -1), { href: user ? `/players/${user.id}` : "/profile", label: "Profile", icon: "user" as const }, baseNavigation[baseNavigation.length - 1]];
   const name =
     displayName ||
     user?.user_metadata?.full_name ||

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ProfileEditor } from "./profile-editor";
 import { useState, type FormEvent } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -18,18 +19,21 @@ const reasons = [
   ["other", "Something else"],
 ];
 
-export function ProfileActions({ playerId, playerName, placement = "body" }: { playerId: string; playerName: string; placement?: "header" | "body" }) {
+export function ProfileActions({ playerId, playerName, placement = "body", showGoBack = false, initiallyEditing = false }: { playerId: string; playerName: string; placement?: "header" | "body"; showGoBack?: boolean; initiallyEditing?: boolean }) {
   const { user } = useAuth();
   if (!user) return null;
-  if (user.id === playerId) return placement === "header" ? <EditProfile key={user.id} userId={user.id} /> : null;
+  if (user.id === playerId) return placement === "header" ? <EditProfile key={user.id} userId={user.id} showGoBack={showGoBack} initiallyEditing={initiallyEditing} /> : null;
   if (placement === "header") return null;
   return <ReportPlayer key={`${user.id}:${playerId}`} playerId={playerId} playerName={playerName} />;
 }
 
-function EditProfile({ userId }: { userId: string }) {
-  const [open, setOpen] = useState(false);
+function EditProfile({ userId, showGoBack, initiallyEditing }: { userId: string; showGoBack: boolean; initiallyEditing: boolean }) {
+  const [open, setOpen] = useState(initiallyEditing);
   return <div className="profile-edit">
+    <div className="profile-edit-buttons">
+    {showGoBack && <Link href="/games" className="button secondary">Go back</Link>}
     <button className="button secondary" aria-expanded={open} aria-controls="edit-profile" onClick={() => setOpen(value => !value)}>{open ? "Close editor" : "Edit profile"}</button>
+    </div>
     {open && <section id="edit-profile" className="panel profile-editor" aria-label="Edit profile">
       <ProfileEditor userId={userId} />
     </section>}

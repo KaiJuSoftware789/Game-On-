@@ -85,7 +85,6 @@ svg {
   flex-direction: column;
   padding: 36px 20px 20px;
   background: #10131a;
-  border-right: 1px solid var(--border);
   z-index: 30;
 }
 .brand {
@@ -176,21 +175,24 @@ svg {
 .sidebar-account {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 10px;
-  border-top: 1px solid var(--border);
   padding: 23px 4px 2px;
 }
 .sidebar-account > span:nth-child(2) {
   min-width: 0;
-  flex: 1;
+  flex: 0 1 auto;
 }
 .sidebar-account strong {
   display: block;
-  font-size: 12px;
+  font-size: 15px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.sidebar-account .avatar { width: 40px; height: 40px; flex-shrink: 0; }
+.sidebar-account .avatar svg { width: 21px; height: 21px; }
+.sidebar-profile-name:hover, .sidebar-account:focus-visible .sidebar-profile-name { color: #fff; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .sidebar-account small {
   display: block;
   margin-top: 4px;
@@ -248,12 +250,21 @@ svg {
 .topbar-account svg {
   width: 16px;
 }
+.page-account-link { position: absolute; top: 48px; right: 48px; display: flex; justify-content: flex-end; max-width: 160px; }
+.page-account-link .topbar-account { max-width: 100%; }
 .main-content {
+  position: relative;
   width: 100%;
   max-width: 1360px;
   margin: 0 auto;
   padding: 48px 48px 64px;
   flex: 1;
+}
+.live-app .page-heading, .live-app .discovery-pages :is(.hero, .events-hero, .rankings-hero, .profile-page-heading) { padding-right: 160px; }
+@media (max-width: 1180px) { .live-app .page-account-link { top: 36px; right: 30px; } }
+@media (max-width: 760px) {
+  .live-app .page-account-link { top: 28px; right: 20px; max-width: 120px; }
+  .live-app .page-heading, .live-app .discovery-pages :is(.hero, .events-hero, .rankings-hero, .profile-page-heading) { padding-right: 120px; }
 }
 .page-heading {
   display: flex;
@@ -1457,7 +1468,7 @@ label.game-card:hover {
 .live-app .discovery-pages .rankings-layout { padding-top: 0; flex: 1; align-items: stretch; }
 .live-app .discovery-pages .leaderboard { display: flex; flex-direction: column; }
 .live-app .discovery-pages .leaderboard > .profile-empty { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-.live-app .discovery-pages .ranking-panel { align-self: start; }
+.live-app .discovery-pages .ranking-panel { align-self: start; min-height: 320px; }
 .live-app .discovery-pages :is(.events-search, .rankings-controls) { margin-top: 24px; }
 @media (max-width: 700px) {
   .live-app .discovery-pages h1 { font-size: 28px; letter-spacing: -1px; }
@@ -1477,7 +1488,7 @@ label.game-card:hover {
   .live-app .sidebar .brand-symbol { flex-shrink: 0; }
   .live-app .sidebar .nav-link { white-space: nowrap; min-height: 48px; justify-content: flex-start; padding-inline: 0; gap: 0; }
   .live-app .sidebar .nav-link > svg { flex-shrink: 0; width: 20px; margin-inline: 12px; }
-  .live-app .sidebar:not(:hover):not(:has(:focus-visible)) :is(.sidebar-brand-text, .nav-label, .nav-active-dot, .recent-friends, .sidebar-note) { display: none; }
+  .live-app .sidebar:not(:hover):not(:has(:focus-visible)) :is(.sidebar-brand-text, .nav-label, .nav-active-dot, .sidebar-note) { display: none; }
   .live-app .sidebar > .sidebar-label { height: 12px; line-height: 12px; margin: 40px 0 20px; white-space: nowrap; }
   .live-app .sidebar:not(:hover):not(:has(:focus-visible)) > .sidebar-label { visibility: hidden; }
   .live-app .sidebar:not(:hover):not(:has(:focus-visible)) .brand-symbol { margin-right: 0; }
@@ -1486,3 +1497,12 @@ label.game-card:hover {
   .live-app .sidebar:not(:hover):not(:has(:focus-visible)) .sidebar-account > :not(.avatar) { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .live-app .sidebar, .live-app .workspace { transition: none; } }
+
+.live-app .main-content > .discovery-pages :is(.hero, .events-hero, .rankings-hero, .profile-page-heading) { padding-right: 160px; }
+@media (max-width: 760px) { .live-app .page-account-link { top: 34px; } .live-app .main-content > .discovery-pages :is(.hero, .events-hero, .rankings-hero, .profile-page-heading) { padding-right: 120px; } }
+
+@media (min-width: 761px) {
+  .live-app .sidebar .recent-friends { width: 212px; opacity: 0; visibility: hidden; transition: opacity .1s ease, visibility 0s linear; }
+  .live-app .sidebar:is(:hover, :has(:focus-visible)) .recent-friends { opacity: 1; visibility: visible; transition-delay: .1s; }
+}
+@media (prefers-reduced-motion: reduce) { .live-app .sidebar .recent-friends { transition: none; } }

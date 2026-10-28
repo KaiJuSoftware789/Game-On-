@@ -93,17 +93,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <RecentMessages onNavigate={() => setOpen(false)} />
-        <div className="sidebar-note">
-          <span className="note-icon">
-            <Icon name="game" />
-          </span>
-          <p>
-            Good games start
-            <br />
-            with good teammates.
-          </p>
-          <span>Find your people. Press play.</span>
-        </div>
+
         <Link
           href={user ? `/players/${user.id}` : "/account"}
           className="sidebar-account"
@@ -115,25 +105,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Icon name="user" />
           </span>
           <span>
-            <strong>
+            <strong className="sidebar-profile-name">
               {loading ? "Loading account…" : user ? name : "Join the party"}
             </strong>
-            <small>
-              {user ? "View your profile" : "Sign in to get started"}
-            </small>
           </span>
-          <Icon name="arrow" />
         </Link>
       </aside>
       <div className="workspace">
-        <div className="topbar">
-          <span>FIND TEAMMATES. GAME TOGETHER.</span>
-          <Link href="/account" className="topbar-account">
-            <Icon name="user" />
-            {user ? name : "Sign in"}
-          </Link>
-        </div>
         <main id="main-content" className="main-content">
+          <div className="page-account-link">
+            <Link href="/account" className="topbar-account">
+              <Icon name="user" />
+              {user ? name : "Sign in"}
+            </Link>
+          </div>
           {children}
         </main>
       </div>

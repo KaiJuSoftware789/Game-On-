@@ -94,11 +94,6 @@ export function Account({
             <PasskeyMfa key={`mfa-${user.id}`} />
             {passkeyEnabled && <Passkeys key={user.id} signedIn next={next} />}
             <ManageConnections key={`connections-${user.id}`} providers={providers} />
-            <Link href="/games" className="button secondary account-action">
-              <Icon name="game" />
-              Manage my games
-              <Icon name="arrow" />
-            </Link>
 
           </>
         ) : (

@@ -1,5 +1,9 @@
 # Game-On!
 
+Signed-in players can message each other from public profiles or the player search on the Messages page. The sidebar lists pinned conversations first, then conversations by most recent access (new incoming conversations use their latest message time until opened). Conversation pins and individually pinned messages are private to each account. Messages update live with periodic refresh as a fallback; older history can be loaded in batches. Only sender and recipient can read a message. Apply all pending migrations before using messaging.
+
+Messaging access checks: `Get-Content supabase/tests/messages.sql -Raw | docker exec -i supabase_db_game-on psql -U postgres -d postgres -v ON_ERROR_STOP=1`. Fixtures are rolled back.
+
 Find open gaming sessions, create a ticket, and share the games you play on a public player profile.
 
 ## Run locally
@@ -58,3 +62,17 @@ Production OAuth and Riot interoperability must be tested with real provider cre
 The SQL integration check covers public selections, owner-only writes, atomic game saves, ticket permissions, and expiration filtering. It runs in a transaction and rolls back its test fixtures. Google font downloads require network access during the production build.
 
 If the Windows Turbopack CSS worker exits before connecting, use the supported Webpack fallback: `npm run build -- --webpack` (or `npm run dev -- --webpack`). The final production build was verified with this fallback.
+
+### Usernames and player reports
+
+Players can change their public display name in Account. Names are not unique account identifiers: links and messages continue to use immutable profile IDs. New names accept 3–32 ASCII letters, digits, spaces, dots, underscores and hyphens. The database filter normalizes common numeric substitutions and punctuation, and rejects a curated English profanity/slur list. This is a baseline filter, not comprehensive multilingual moderation; it can also reject innocent names containing blocked substrings. Provider names that fail validation fall back to Player for new accounts.
+
+Signed-in players can report another player from their public profile. Reports are stored privately in `public.player_reports`; clients cannot read or modify them. Submissions are capped at five per rolling 24 hours, with one pending report per target/reason. Authorized operators can review pending reports in the Supabase dashboard and change `status` to `reviewed` or `dismissed`. No automated penalties, notification delivery or moderator dashboard is implemented. Keep database/service-role access restricted to trusted operators.
+
+Regression checks: run `supabase/tests/usernames_reports.sql` against the local database with psql. The test transaction rolls back all fixtures.
+
+### Profile privacy
+
+Edit profile includes Public/Private mode. Existing and new profiles start public; selecting Private defaults to Friends and me, with an Only me option. Username/ID remain searchable for messaging and reporting. Bio lives in `profile_details` and game selections use the same database access rule: public, owner, or accepted friend when allowed. Pending requests grant no access. Friend controls are available on other player profiles. Removing a friendship removes private-profile access. Profile privacy does not change visibility of tickets users post publicly.
+
+Run `supabase/tests/profile_privacy.sql` for rollback-only database access checks. Bio editors now read `profile_details`, replacing the earlier `profiles.bio` column.

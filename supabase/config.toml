@@ -417,12 +417,14 @@ enabled = true
 
 [auth.external.google]
 enabled = true
-client_id = "14679937195-j2n9n2bojhgkj6e6ntdkbkok61fce2or.apps.googleusercontent.com"
-secret = "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"
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+
 redirect_uri = "http://127.0.0.1:54321/auth/v1/callback"
 
 [auth.external.discord]
 enabled = true
-client_id = "1563295141609873559"
-secret = "IIww8NMFO4PpBEIGby6forVahHe1wKUE"
+client_id = "env(SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET)"
+
 redirect_uri = "http://127.0.0.1:54321/auth/v1/callback"

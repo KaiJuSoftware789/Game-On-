@@ -26,13 +26,12 @@ export function GamePreferences({
             Your games. <span>Your people.</span>
           </h1>
           <p>
-            Choose the games you play. Your lineup is public so other players
-            can find common ground.
+            Choose the games you play. Your profile privacy settings control who can see your lineup.
           </p>
         </div>
         {user && (
           <Link href={`/players/${user.id}`} className="button secondary">
-            View public profile
+            View my profile
             <Icon name="arrow" />
           </Link>
         )}

@@ -2,6 +2,7 @@ import type { SVGProps } from "react";
 
 type IconName =
   | "game"
+  | "message"
   | "tickets"
   | "user"
   | "arrow"
@@ -15,6 +16,7 @@ type IconName =
   | "globe";
 
 const paths: Record<IconName, React.ReactNode> = {
+  message: <path d="M21 15a3 3 0 0 1-3 3H8l-5 3V6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3Z" />,
   game: (
     <>
       <path d="M6 7h12a3 3 0 0 1 3 2.6l1 7a2.5 2.5 0 0 1-4.2 2.2L14 16h-4l-3.8 2.8A2.5 2.5 0 0 1 2 16.6l1-7A3 3 0 0 1 6 7Z" />

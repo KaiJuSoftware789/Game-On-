@@ -7,17 +7,22 @@ import type { SignInProvider } from "@/lib/auth-config";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "./auth-provider";
 import { Icon } from "./icons";
+import { PhoneSignIn, Passkeys } from "./passwordless-auth";
 
 export function Account({
   providers,
   configError,
   callbackError,
   next,
+  phoneEnabled,
+  passkeyEnabled,
 }: {
   providers: SignInProvider[];
   configError: boolean;
   callbackError: boolean;
   next: string;
+  phoneEnabled: boolean;
+  passkeyEnabled: boolean;
 }) {
   const { user, loading, displayName } = useAuth();
   const router = useRouter();
@@ -83,6 +88,8 @@ export function Account({
                 "Player"}
             </h2>
             {user.email && <p className="muted">{user.email}</p>}
+            {user.phone && <p className="muted">+{user.phone.replace(/^\+/, "")}</p>}
+            {passkeyEnabled && <Passkeys key={user.id} signedIn next={next} />}
             <div className="account-facts">
               <span>Signed in with</span>
               <strong>
@@ -110,6 +117,7 @@ export function Account({
               Sign in to post tickets and save the games you play.
             </p>
             <div className="provider-list">
+              {passkeyEnabled && <Passkeys signedIn={false} next={next} disabled={Boolean(busy)} />}
               {providers.map((provider) => (
                 <button
                   key={provider.id}
@@ -138,6 +146,7 @@ export function Account({
                 </button>
               ))}
             </div>
+            <PhoneSignIn enabled={phoneEnabled} disabled={Boolean(busy)} next={next} />
             {configError ? (
               <p className="notice error" role="alert">
                 We couldn’t connect to the sign-in service. Please try again once

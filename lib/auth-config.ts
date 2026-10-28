@@ -7,6 +7,8 @@ export type SignInProvider = {
 export async function getSignInProviders(): Promise<{
   providers: SignInProvider[];
   error: boolean;
+  phoneEnabled: boolean;
+  passkeyEnabled: boolean;
 }> {
   const riotProvider = process.env.SUPABASE_RIOT_PROVIDER;
   const riotEnabled = Boolean(
@@ -30,6 +32,8 @@ export async function getSignInProviders(): Promise<{
   }
   return {
     error,
+    phoneEnabled: external.phone === true,
+    passkeyEnabled: process.env.NEXT_PUBLIC_ENABLE_PASSKEYS === "true",
     providers: [
       { id: "google", name: "Google", enabled: external.google === true },
       {

@@ -53,6 +53,34 @@ Copy the custom provider's displayed Supabase callback URL into the Riot applica
 
 Production OAuth and Riot interoperability must be tested with real provider credentials; local checks cannot verify third-party consent or provider approval.
 
+## Phone passwordless sign-in and passkeys
+
+Account supports SMS sign-in codes alongside social sign-in. Enter a phone number including its country code, request a code, and verify it to sign in or create an account. Codes are verified by Supabase; the app never stores them. Phone numbers remain in Auth and are not copied into public profiles. Signing in with a new phone number creates a separate account from an existing social account; this flow does not link accounts.
+
+For hosted Supabase, enable **Authentication → Providers → Phone**, allow phone signups, and configure an SMS provider such as Twilio. Keep credentials in Supabase. Configure server-side SMS rate limits and spend limits before public rollout; the UI's 60-second resend timer is only a convenience. The phone form reads availability from Supabase's Auth settings.
+
+Local SMS signup and phone confirmation are enabled in `supabase/config.toml`. Configure the existing Twilio section with real credentials to send messages, or uncomment `auth.sms.test_otp` with a development-only phone/code pair to test without sending texts. Never configure fixed test codes on a production project. Restart the local stack after changing Auth configuration; do not reset the database.
+
+Passkeys use Supabase's experimental native WebAuthn support. In **Authentication → Passkeys**, enable passkeys and configure the relying party display name, stable domain ID (no scheme or port), and allowed HTTPS app origins. Then set `NEXT_PUBLIC_ENABLE_PASSKEYS=true` in `.env.local` or the deployment environment and restart/rebuild the app. This flag exposes the UI; it does not enable the Auth service. Users sign in first with a phone or social provider, add a passkey in Account, then use **Sign in with a passkey** on subsequent visits. Account also lists and removes registered passkeys. Keep access to the original sign-in method as a fallback.
+
+For local passkey testing, add the following to `supabase/config.toml` and restart Supabase, using `http://localhost:3000` for the app:
+
+```toml
+[auth.passkey]
+enabled = true
+
+[auth.webauthn]
+rp_display_name = "Game-On!"
+rp_id = "localhost"
+rp_origins = ["http://localhost:3000"]
+```
+
+Passkeys require a browser with WebAuthn and HTTPS (localhost is allowed). Changing the relying party ID invalidates previously registered passkeys. Both SMS sign-in and passkeys use the existing Supabase session and database permissions; no additional 2FA prompt is added.
+
+Manual verification with configured Auth: request an SMS code, reject an incorrect/expired code, resend after the cooldown, switch phone numbers, and verify the correct code reaches the requested page with a session. Register a passkey, sign out, sign back in with it, cancel a browser prompt and retry, then remove the passkey and confirm the original sign-in method still works. Verify a phone-created account receives a public Player profile without exposing the phone number.
+
+References: [Supabase phone sign-in](https://supabase.com/docs/guides/auth/phone-login) and [passkey configuration](https://supabase.com/docs/guides/auth/passkeys).
+
 ## Checks
 
 - `npm run lint`
